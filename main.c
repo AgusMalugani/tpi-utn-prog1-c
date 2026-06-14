@@ -15,10 +15,10 @@ void mostrarListaPorDisciplina(char dniLocal[][15], char nombreLocal[][30], char
 void listaGeneralAlumnos(char dni[][15], char nombre[][30], char apellido[][30], int edad[], char codTaller[][10], int cantAlumnos);
 void listaPorDisciplina(char dni[][15], char nombre[][30], char apellido[][30], int edad[], char codTaller[][10], int cantAlumnos);
 
-int validarDni(char dni[15]); // TODO: FALTA VALIDAR QUE NO PERMITA INGRESAR EL MISMO DNI
+int validarDni(char dni[15]);  
 int validacionString(char string[30]);
-int validacionEdad(int edad);
-int validacionMetodoPago(int metodoPago);
+int validacionEdad(int edad); 
+int validacionMetodoPago(int metodoPago);  
 
 void main()
 {
@@ -195,17 +195,10 @@ si no se cumple nada de esto, retorna un 0. En caso que sea un dni valido, retor
 */
 int validarDni(char dni[15])
 {
-    /*
-    Validación de DNI: El DNI deberá:
-     Ser un número entero de 7 u 8 dígitos.
-     Cumplir al menos una de las siguientes condiciones:
-    o Comenzar con 5 o 6.
-    o Estar en el rango de 10.000.000 a 60.000.000 inclusive.
-    */
+  
     int bandera = 0;
     int lenghtDni = strlen(dni);
 
-    // isdigit debemos implementarlo para validar que no haya letras
 
     if (lenghtDni < 7 || lenghtDni > 8)
     {
@@ -215,9 +208,9 @@ int validarDni(char dni[15])
     else
     {
 
-        int numDni = atoi(dni);
+        int numDni = atoi(dni); //convierte la cadena a un entero
         char primerNum = dni[0];
-        if ((primerNum == '5' || primerNum == '5') || (lenghtDni == 8 && (numDni >= 10000000 && numDni <= 60000000)))
+        if ((primerNum == '5' || primerNum == '6') || (lenghtDni == 8 && (numDni >= 10000000 && numDni <= 60000000)))
         {
             bandera = 1;
         }
@@ -230,6 +223,10 @@ int validarDni(char dni[15])
     return bandera;
 }
 
+
+/*
+validacionString, si el string tiene menos de 3 caracteres o tiene mas de 30, entonces lanza un error 
+*/
 int validacionString(char string[30])
 {
 
@@ -248,6 +245,8 @@ int validacionString(char string[30])
     return bandera;
 };
 
+
+/*validacionEdad, si la edad es menor q 0 o mayor que 99, entonces lanza error*/
 int validacionEdad(int edad)
 {
     int bandera = 0;
@@ -262,6 +261,7 @@ int validacionEdad(int edad)
     return bandera;
 };
 
+/* validacionMetodoPago, si no es 1 o 2, lanza error*/
 int validacionMetodoPago(int metodoPago)
 {
     int bandera = 0;
@@ -368,10 +368,10 @@ void eleccionTaller(char codTaller[][10], int cantAlumnos, int indice)
     char codigo[10];
     int bandera = 1;
     int coincidenciaTaller = 1;
-    char talleres[][10] = {"PNT", "ESC", "THR", "FOT"};
+    char talleres[][10] = {"PNT", "ESC", "THR", "FOT"}; //arreglo auxiliar
     do
     {
-        int cont = 0;
+        int cont = 0;  // va a servir para ver cuantos inscriptos hay por taller
 
         printf("Codigo Disciplina Importe Mensual\n");
         printf("PNT Pintura $25.000\n");
@@ -384,7 +384,7 @@ void eleccionTaller(char codTaller[][10], int cantAlumnos, int indice)
 
         for (int i = 0; i < cantAlumnos; i++)
         {
-            if (strcmp(codTaller[i], codigo) == 0)
+            if (strcmp(codTaller[i], codigo) == 0) // veo cada pos del arreglo, para saber la cant de inscriptos ahi
             {
                 cont++;
             };
@@ -397,40 +397,45 @@ void eleccionTaller(char codTaller[][10], int cantAlumnos, int indice)
 
         for (int i = 0; i < 4; i++)
         {
-            if (strcmp(codigo, talleres[i]) == 0)
+            if (strcmp(codigo, talleres[i]) == 0)  // ahora comparo con el array aux a ver si esta ese taller
             {
-                coincidenciaTaller = 0;
+                coincidenciaTaller = 0;  //si esta, cambio variable a 0
             };
         }
 
-        if (coincidenciaTaller == 1)
+        if (coincidenciaTaller == 1)  //si es 1, significa que no estaba en el array aux
         {
             printf("El codigo ingresado no coincide con los codigos disponibles\n");
         }
 
-        if (cont > 59)
+        if (cont > 59) // si el cont es 60 significa que esta lleno
         {
             printf("Debe seleccionar otro taller, ya que el taller con el codigo %s se encuentra lleno \n", codigo);
         }
         else
         {
-            bandera = 0;
+            bandera = 0;  // si cambio la bandera significa que lo puedo asignar correctamente y salir del bucle
         }
 
     } while (bandera == 1 || coincidenciaTaller == 1); // ambas banderas deben cambiar a 0 para poder salir del dowhile
 
-    strcpy(codTaller[indice], codigo);
+    strcpy(codTaller[indice], codigo);   // si salio, entonces en el arreglo, en el indice q envie por param, guardo el codigo da taller
 };
 
 /*
     la funcion buscadorDeAlumnoPorDni recibe el arreglo de dni y la cantAlumnos ingresados
     se crean 2 variables, 1 para el dni a buscar y otra variable llamada indice que se inicializa en -1 ( se inicializo en -1 porque si la dejo en 0
     y no encuentra el dni, entonces tomara el dni del primer usuario del arreglo.)
+    y una variable cont inicializada en 0, para evitar el bucle infinito, donde nunca encuentre el dni
 
     se le pide al usuario que ingrese el dni y se hace un bucle while donde se ejecutara hasta que i sea = a cantAlumnos o que indice sea != a -1
     esto significa que si indice es != -1 se encontro el dni
 
-    al salir del bucle while, retorna la variable indice. esta variable tiene 2 opciones
+    dentro del bucle, en cada iteracion, se suma cont ++.  parasalir del bucle, se tiene que encontrar el dni, o el cont debe ser 3
+
+
+    al salir del bucle while, 
+    se valida si se encontro el dni, o si fue x max intento y retorna la variable indice. esta variable tiene 2 opciones
     -  -1 si no encontro el dni buscado
     -  el indice del dni buscado
 
@@ -530,20 +535,20 @@ void estadoTalleres(char codTaller[][10], float montoAbonar[], int cantAlumnos)
     int cantidadAlumnosCurso;
     float suma;
     float sumaTotalTalleres = 0;
-    char talleres[][10] = {"PNT", "ESC", "THR", "FOT"};
+    char talleres[][10] = {"PNT", "ESC", "THR", "FOT"}; //array aux
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) // seria c/taller del array aux
     {
         suma = 0;
         cantidadAlumnosCurso = 0;
         for (int j = 0; j < cantAlumnos; j++)
         {
-            if (strcmp(codTaller[j], talleres[i]) == 0)
+            if (strcmp(codTaller[j], talleres[i]) == 0) //comparo el taller de los alumnos con el array aux
             {
                 suma = suma + montoAbonar[j];
                 cantidadAlumnosCurso++;
             }
-        }
+        }// cuando salgo del for muestro los resultados que encontre,la cant alumnos y la suma del taller
         printf("######################\n");
         if (strcmp(talleres[i], "PNT") == 0)
         {
@@ -589,6 +594,24 @@ void estadoTalleres(char codTaller[][10], float montoAbonar[], int cantAlumnos)
     printf("El importe total recaudado por la academia fue de: %.2f \n", sumaTotalTalleres);
 }
 
+
+/*
+estadisticaGestion, recibe la cantidad de alumnos, el array de codtaller y el array de edades
+se recorre el arreglo de talleres auxiliar de 0 a 3
+y se inicializa apenas se entra, las variables porcentaje, cantidadAlumonosCurso, cantMenores5anoisCurso, porcMenoresCurso
+
+Se crea otro for, para recorrer el array q se envia de talleres, codTaller  
+y se evalua si el taller es igual al taller que estoy en i ( aux [i] = codtaller[j])
+si entra al condicional, significa que son el mismo nombre de taller y le suma 1 a cantidadAlumnosCurso ( esta variable me sirve para ver cuantos alumons tiene c/curso)
+ahora evaluo, si ese alumno tiene menos de 5 años, si es asi, sumo uno a la variable cantMenores5AniosCurso
+
+al salir del for voy a ver si la variable cantAlumMayor ( que tendria que tener el num de alumnos max en los cursor) es menor que
+cantidadAlumnosCurso, si es asi, cantAlumMayor, ahora vale lo que vale cantidadAlumnosCursos
+ y la variable  actualizo la variable codCursoMayor( esta variable va a guardar el codigo del taller con mas alumnos) con el codigo del taller en la posicion i, talleres[i]
+
+despues calculo el porcentaje de alumnos, el porcentaje de alumnos menores a 5 años, y muestro los datos de los cursos correspondientes
+
+*/
 void estadisticaGestion(int cantAlumnos, char codTaller[][10], int edad[])
 {
 
@@ -605,7 +628,7 @@ void estadisticaGestion(int cantAlumnos, char codTaller[][10], int edad[])
      Porcentaje de alumnos menores de 5 años por cada taller.
     */
 
-    char talleres[][10] = {"PNT", "ESC", "THR", "FOT"};
+    char talleres[][10] = {"PNT", "ESC", "THR", "FOT"};//array aux
 
     for (int i = 0; i < 4; i++)
     {
@@ -696,7 +719,8 @@ void estadisticaGestion(int cantAlumnos, char codTaller[][10], int edad[])
 /*
     La funcion intercambiarAlumnosLocal recibe dos indices y los arreglos locales de copia.
     Intercambia los datos completos de un alumno entre indiceA e indiceB para mantener
-    sincronizados dni, nombre, apellido, edad y codTaller al ordenar.
+    sincronizados dni, nombre, apellido, edad y codTaller al ordenar.  y evitar que se pierda algun dato ya que usamos arreglos paralelos
+
 */
 void intercambiarAlumnosLocal(int indiceA, int indiceB, char dniLocal[][15], char nombreLocal[][30], char apellidoLocal[][30], int edadLocal[], char codTallerLocal[][10])
 {
@@ -765,7 +789,7 @@ void mostrarListaPorDisciplina(char dniLocal[][15], char nombreLocal[][30], char
 
 /*
     La funcion listaGeneralAlumnos copia los datos de los arreglos originales a arreglos locales,
-    los ordena por apellido y nombre con ordenamiento por seleccion, y llama a mostrarListaGeneral
+    los ordena por apellido y nombre con ordenamiento por seleccion , y llama a mostrarListaGeneral
     sin modificar los arreglos originales del main.
 */
 void listaGeneralAlumnos(char dni[][15], char nombre[][30], char apellido[][30], int edad[], char codTaller[][10], int cantAlumnos)
@@ -868,3 +892,9 @@ void listaPorDisciplina(char dni[][15], char nombre[][30], char apellido[][30], 
 
     mostrarListaPorDisciplina(dniLocal, nombreLocal, apellidoLocal, edadLocal, codTallerLocal, cantAlumnos);
 }
+
+
+
+
+
+
