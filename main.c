@@ -9,6 +9,11 @@ int buscadorDeAlumnoPorDni(char dni[][15], int cantAlumnos);
 void eleccionTaller(char codTaller[][10], int cantAlumnos, int indice);
 void estadoTalleres(char codTaller[][10], float montoAbonar[], int cantAlumnos);
 void estadisticaGestion(int cantAlumnos, char codTaller[][10], int edad[]);
+void intercambiarAlumnosLocal(int indiceA, int indiceB, char dniLocal[][15], char nombreLocal[][30], char apellidoLocal[][30], int edadLocal[], char codTallerLocal[][10]);
+void mostrarListaGeneral(char dniLocal[][15], char nombreLocal[][30], char apellidoLocal[][30], int edadLocal[], char codTallerLocal[][10], int cantAlumnos);
+void mostrarListaPorDisciplina(char dniLocal[][15], char nombreLocal[][30], char apellidoLocal[][30], int edadLocal[], char codTallerLocal[][10], int cantAlumnos);
+void listaGeneralAlumnos(char dni[][15], char nombre[][30], char apellido[][30], int edad[], char codTaller[][10], int cantAlumnos);
+void listaPorDisciplina(char dni[][15], char nombre[][30], char apellido[][30], int edad[], char codTaller[][10], int cantAlumnos);
 
 int validarDni(char dni[15]); // TODO: FALTA VALIDAR QUE NO PERMITA INGRESAR EL MISMO DNI
 int validacionString(char string[30]);
@@ -53,12 +58,30 @@ void main()
             break;
         }
         case 2:
-            /* code */
+        {
+            if (cantAlumnos == 0)
+            {
+                printf("No hay alumnos cargados.\n");
+            }
+            else
+            {
+                listaGeneralAlumnos(dni, nombre, apellido, edad, codTaller, cantAlumnos);
+            }
             break;
+        }
 
         case 3:
-            /* code */
+        {
+            if (cantAlumnos == 0)
+            {
+                printf("No hay alumnos cargados.\n");
+            }
+            else
+            {
+                listaPorDisciplina(dni, nombre, apellido, edad, codTaller, cantAlumnos);
+            }
             break;
+        }
 
         case 4:
         {
@@ -396,11 +419,13 @@ int buscadorDeAlumnoPorDni(char dni[][15], int cantAlumnos)
 {
     char dniBuscar[15];
     int indice = -1;
+    int cont = 0;
     do
     {
         printf("Ingrese el dni del usuario a buscar: \n");
         scanf("%s", &dniBuscar);
-    } while (validarDni(dniBuscar) == 0);
+        cont ++;
+    } while (validarDni(dniBuscar) == 0 && cont < 3);
 
     int i = 0;
     while (i < cantAlumnos && indice == -1)
@@ -412,6 +437,11 @@ int buscadorDeAlumnoPorDni(char dni[][15], int cantAlumnos)
 
         i++;
     };
+
+    if(cont == 3 && indice == -1){
+        printf("Error, maximos intentos \n");
+    }
+   
 
     return indice;
 };
@@ -642,7 +672,181 @@ void estadisticaGestion(int cantAlumnos, char codTaller[][10], int edad[])
     printf("El curso con mas alumnos es: %s, con una cantidad de %d, alumnos \n", codCursoMayor, cantAlumMayor);
 };
 
+/*
+    La funcion intercambiarAlumnosLocal recibe dos indices y los arreglos locales de copia.
+    Intercambia los datos completos de un alumno entre indiceA e indiceB para mantener
+    sincronizados dni, nombre, apellido, edad y codTaller al ordenar.
+*/
+void intercambiarAlumnosLocal(int indiceA, int indiceB, char dniLocal[][15], char nombreLocal[][30], char apellidoLocal[][30], int edadLocal[], char codTallerLocal[][10])
+{
+    char auxDni[15];
+    char auxNombre[30];
+    char auxApellido[30];
+    char auxCodTaller[10];
+    int auxEdad;
 
+    strcpy(auxDni, dniLocal[indiceA]);
+    strcpy(auxNombre, nombreLocal[indiceA]);
+    strcpy(auxApellido, apellidoLocal[indiceA]);
+    strcpy(auxCodTaller, codTallerLocal[indiceA]);
+    auxEdad = edadLocal[indiceA]; // GUARDO LOS DATOS EN UNAS VARIABLES AUXILIARES PARA DESPUES ASIGNARLAS A AL OTRO ARREGLO
+
+    strcpy(dniLocal[indiceA], dniLocal[indiceB]);
+    strcpy(nombreLocal[indiceA], nombreLocal[indiceB]);
+    strcpy(apellidoLocal[indiceA], apellidoLocal[indiceB]);
+    strcpy(codTallerLocal[indiceA], codTallerLocal[indiceB]);
+    edadLocal[indiceA] = edadLocal[indiceB];  //ACA REEMPLAZO LO QUE TENIA EN A Y PONGO LO QUE TENGO EN B
+
+    strcpy(dniLocal[indiceB], auxDni);
+    strcpy(nombreLocal[indiceB], auxNombre);
+    strcpy(apellidoLocal[indiceB], auxApellido);
+    strcpy(codTallerLocal[indiceB], auxCodTaller);
+    edadLocal[indiceB] = auxEdad;   // ACA EN B PONGO LO QUE GUARDE EN AUX, QUE SERIA LO QUE TENIA EN A 
+
+    //DE ESTA MANERA NO PIERDO LOS DATOS Y NO SE ME DESORDENAN LOS ARREGLOS PARALELOS
+}
+
+/*
+    La funcion mostrarListaGeneral recibe los arreglos locales ya ordenados y la cantidad de alumnos.
+    Muestra apellido y nombre, dni, edad y el codigo del taller seleccionado.
+*/
+void mostrarListaGeneral(char dniLocal[][15], char nombreLocal[][30], char apellidoLocal[][30], int edadLocal[], char codTallerLocal[][10], int cantAlumnos)
+{
+    printf("========== LISTA GENERAL DE ALUMNOS ==========\n");
+
+    for (int i = 0; i < cantAlumnos; i++)
+    {
+        printf("Apellido y Nombre: %s %s\n", apellidoLocal[i], nombreLocal[i]);
+        printf("DNI: %s\n", dniLocal[i]);
+        printf("Edad: %d\n", edadLocal[i]);
+        printf("Taller seleccionado: %s\n", codTallerLocal[i]);
+        printf("----------------------------------------------\n");
+    }
+}
+
+/*
+    La funcion mostrarListaPorDisciplina recibe los arreglos locales ya ordenados y la cantidad de alumnos.
+    Muestra codigo de taller, apellido y nombre, dni y edad.
+*/
+void mostrarListaPorDisciplina(char dniLocal[][15], char nombreLocal[][30], char apellidoLocal[][30], int edadLocal[], char codTallerLocal[][10], int cantAlumnos)
+{
+    printf("========== LISTA POR DISCIPLINA ==========\n");
+
+    for (int i = 0; i < cantAlumnos; i++)
+    {
+        printf("Codigo de Taller: %s\n", codTallerLocal[i]);
+        printf("Apellido y Nombre: %s %s\n", apellidoLocal[i], nombreLocal[i]);
+        printf("DNI: %s\n", dniLocal[i]);
+        printf("Edad: %d\n", edadLocal[i]);
+        printf("-----------------------------------------\n");
+    }
+}
+
+/*
+    La funcion listaGeneralAlumnos copia los datos de los arreglos originales a arreglos locales,
+    los ordena por apellido y nombre con ordenamiento por seleccion, y llama a mostrarListaGeneral
+    sin modificar los arreglos originales del main.
+*/
+void listaGeneralAlumnos(char dni[][15], char nombre[][30], char apellido[][30], int edad[], char codTaller[][10], int cantAlumnos)
+{
+    char dniLocal[30][15];
+    char nombreLocal[30][30];
+    char apellidoLocal[30][30];
+    int edadLocal[30];
+    char codTallerLocal[30][10];
+    int menor;
+    int comparacionApellido;
+
+    for (int i = 0; i < cantAlumnos; i++)
+    {
+        strcpy(dniLocal[i], dni[i]);
+        strcpy(nombreLocal[i], nombre[i]);
+        strcpy(apellidoLocal[i], apellido[i]);
+        edadLocal[i] = edad[i];
+        strcpy(codTallerLocal[i], codTaller[i]);
+    } //EN ESTE FOR, COPIE TODOS LOS ELEMENTOS DEL ARREGLO ORIGINAL, EN EL ARREGLO LOCAL
+
+    for (int i = 0; i < cantAlumnos - 1; i++)
+    {
+        menor = i;
+
+        for (int j = i + 1; j < cantAlumnos; j++)
+        {
+            comparacionApellido = strcmp(apellidoLocal[j], apellidoLocal[menor]);
+
+            if (comparacionApellido < 0 ||
+                (comparacionApellido == 0 && strcmp(nombreLocal[j], nombreLocal[menor]) < 0))
+            {
+                menor = j;
+            }
+        }
+
+        if (menor != i)
+        {
+            intercambiarAlumnosLocal(i, menor, dniLocal, nombreLocal, apellidoLocal, edadLocal, codTallerLocal);
+        }
+    }
+
+    mostrarListaGeneral(dniLocal, nombreLocal, apellidoLocal, edadLocal, codTallerLocal, cantAlumnos);
+}
+
+/*
+    La funcion listaPorDisciplina copia los datos de los arreglos originales a arreglos locales,
+    los ordena por codigo de taller, apellido y nombre con ordenamiento por seleccion,
+    y llama a mostrarListaPorDisciplina sin modificar los arreglos originales del main.
+*/
+void listaPorDisciplina(char dni[][15], char nombre[][30], char apellido[][30], int edad[], char codTaller[][10], int cantAlumnos)
+{
+    char dniLocal[30][15];
+    char nombreLocal[30][30];
+    char apellidoLocal[30][30];
+    int edadLocal[30];
+    char codTallerLocal[30][10];
+    int menor;
+    int comparacionTaller;
+    int comparacionApellido;
+
+    for (int i = 0; i < cantAlumnos; i++)
+    {
+        strcpy(dniLocal[i], dni[i]);
+        strcpy(nombreLocal[i], nombre[i]);
+        strcpy(apellidoLocal[i], apellido[i]);
+        edadLocal[i] = edad[i];
+        strcpy(codTallerLocal[i], codTaller[i]);
+    }
+
+    for (int i = 0; i < cantAlumnos - 1; i++)
+    {
+        menor = i;
+
+        for (int j = i + 1; j < cantAlumnos; j++)
+        {
+            comparacionTaller = strcmp(codTallerLocal[j], codTallerLocal[menor]);
+
+            if (comparacionTaller < 0)
+            {
+                menor = j;
+            }
+            else if (comparacionTaller == 0)
+            {
+                comparacionApellido = strcmp(apellidoLocal[j], apellidoLocal[menor]);
+
+                if (comparacionApellido < 0 ||
+                    (comparacionApellido == 0 && strcmp(nombreLocal[j], nombreLocal[menor]) < 0))
+                {
+                    menor = j;
+                }
+            }
+        }
+
+        if (menor != i)
+        {
+            intercambiarAlumnosLocal(i, menor, dniLocal, nombreLocal, apellidoLocal, edadLocal, codTallerLocal);
+        }
+    }
+
+    mostrarListaPorDisciplina(dniLocal, nombreLocal, apellidoLocal, edadLocal, codTallerLocal, cantAlumnos);
+}
 
 
 
