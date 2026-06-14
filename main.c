@@ -85,34 +85,55 @@ void main()
 
         case 4:
         {
-            estadoTalleres(codTaller, montoAbonar, cantAlumnos);
-        };
-
-        break;
-        case 5:
-        {
-            int i;
-            i = buscadorDeAlumnoPorDni(dni, cantAlumnos); // CON EL I ( SERIA LA POSICION DE LOS ARREGLOS ) BUSCO LOS OTROS DATOS
-            if (i == -1)
+            if (cantAlumnos == 0)
             {
-                printf("No existe usuario con ese dni \n");
+                printf("No hay alumnos cargados.\n");
             }
             else
             {
-                printf("Datos del usuario: \n");
-                printf("Nombre: %s \n", nombre[i]);
-                printf("Apellido: %s \n", apellido[i]);
-                printf("Dni: %s \n", dni[i]);
-                printf("Edad: %d \n", edad[i]);
-                printf("Taller: %s \n", codTaller[i]);
-                printf("Importe a abonar: %.2f \n", montoAbonar[i]);
+                estadoTalleres(codTaller, montoAbonar, cantAlumnos);
+            };
+            break;
+        };
+
+        case 5:
+        {
+            if (cantAlumnos == 0)
+            {
+                printf("No hay alumnos cargados.\n");
+            }
+            else
+            {
+                int i;
+                i = buscadorDeAlumnoPorDni(dni, cantAlumnos); // CON EL I ( SERIA LA POSICION DE LOS ARREGLOS ) BUSCO LOS OTROS DATOS
+                if (i == -1)
+                {
+                    printf("No existe usuario con ese dni \n");
+                }
+                else
+                {
+                    printf("Datos del usuario: \n");
+                    printf("Nombre: %s \n", nombre[i]);
+                    printf("Apellido: %s \n", apellido[i]);
+                    printf("Dni: %s \n", dni[i]);
+                    printf("Edad: %d \n", edad[i]);
+                    printf("Taller: %s \n", codTaller[i]);
+                    printf("Importe a abonar: %.2f \n", montoAbonar[i]);
+                }
             }
 
             break;
         }
         case 6:
         {
-            estadisticaGestion(cantAlumnos, codTaller, edad);
+            if (cantAlumnos == 0)
+            {
+                printf("No hay alumnos cargados.\n");
+            }
+            else
+            {
+                estadisticaGestion(cantAlumnos, codTaller, edad);
+            }
             break;
         }
 
@@ -184,8 +205,8 @@ int validarDni(char dni[15])
     int bandera = 0;
     int lenghtDni = strlen(dni);
 
-    //isdigit debemos implementarlo para validar que no haya letras
-    
+    // isdigit debemos implementarlo para validar que no haya letras
+
     if (lenghtDni < 7 || lenghtDni > 8)
     {
         printf("El dni debe contener entre 7 u 8 digitos \n");
@@ -424,7 +445,7 @@ int buscadorDeAlumnoPorDni(char dni[][15], int cantAlumnos)
     {
         printf("Ingrese el dni del usuario a buscar: \n");
         scanf("%s", &dniBuscar);
-        cont ++;
+        cont++;
     } while (validarDni(dniBuscar) == 0 && cont < 3);
 
     int i = 0;
@@ -438,10 +459,10 @@ int buscadorDeAlumnoPorDni(char dni[][15], int cantAlumnos)
         i++;
     };
 
-    if(cont == 3 && indice == -1){
+    if (cont == 3 && indice == -1)
+    {
         printf("Error, maximos intentos \n");
     }
-   
 
     return indice;
 };
@@ -695,15 +716,15 @@ void intercambiarAlumnosLocal(int indiceA, int indiceB, char dniLocal[][15], cha
     strcpy(nombreLocal[indiceA], nombreLocal[indiceB]);
     strcpy(apellidoLocal[indiceA], apellidoLocal[indiceB]);
     strcpy(codTallerLocal[indiceA], codTallerLocal[indiceB]);
-    edadLocal[indiceA] = edadLocal[indiceB];  //ACA REEMPLAZO LO QUE TENIA EN A Y PONGO LO QUE TENGO EN B
+    edadLocal[indiceA] = edadLocal[indiceB]; // ACA REEMPLAZO LO QUE TENIA EN A Y PONGO LO QUE TENGO EN B
 
     strcpy(dniLocal[indiceB], auxDni);
     strcpy(nombreLocal[indiceB], auxNombre);
     strcpy(apellidoLocal[indiceB], auxApellido);
     strcpy(codTallerLocal[indiceB], auxCodTaller);
-    edadLocal[indiceB] = auxEdad;   // ACA EN B PONGO LO QUE GUARDE EN AUX, QUE SERIA LO QUE TENIA EN A 
+    edadLocal[indiceB] = auxEdad; // ACA EN B PONGO LO QUE GUARDE EN AUX, QUE SERIA LO QUE TENIA EN A
 
-    //DE ESTA MANERA NO PIERDO LOS DATOS Y NO SE ME DESORDENAN LOS ARREGLOS PARALELOS
+    // DE ESTA MANERA NO PIERDO LOS DATOS Y NO SE ME DESORDENAN LOS ARREGLOS PARALELOS
 }
 
 /*
@@ -764,7 +785,7 @@ void listaGeneralAlumnos(char dni[][15], char nombre[][30], char apellido[][30],
         strcpy(apellidoLocal[i], apellido[i]);
         edadLocal[i] = edad[i];
         strcpy(codTallerLocal[i], codTaller[i]);
-    } //EN ESTE FOR, COPIE TODOS LOS ELEMENTOS DEL ARREGLO ORIGINAL, EN EL ARREGLO LOCAL
+    } // EN ESTE FOR, COPIE TODOS LOS ELEMENTOS DEL ARREGLO ORIGINAL, EN EL ARREGLO LOCAL
 
     for (int i = 0; i < cantAlumnos - 1; i++)
     {
@@ -847,6 +868,3 @@ void listaPorDisciplina(char dni[][15], char nombre[][30], char apellido[][30], 
 
     mostrarListaPorDisciplina(dniLocal, nombreLocal, apellidoLocal, edadLocal, codTallerLocal, cantAlumnos);
 }
-
-
-
