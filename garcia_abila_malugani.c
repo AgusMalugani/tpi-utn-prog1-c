@@ -1,3 +1,9 @@
+/*
+TRABAJO PRACTICO DE PROGRAMACION
+INTEGRANTES DEL GRUPO: Garcia Arami, Abila Pablo, Malugani Agustin
+
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -272,7 +278,7 @@ int validacionMetodoPago(int metodoPago)
     }
     else
     {
-        printf("Opcion ingresada incorrecta. Debe ser 1 o 2");
+        printf("Opcion ingresada incorrecta. Debe ser 1 o 2 \n");
     };
 
     return bandera;
@@ -338,7 +344,7 @@ void cargaDeAlumnos(char dni[][15], char nombre[][30], char apellido[][30], int 
             printf("1- Efectivo \n");
             printf("2- Tarjeta de credito \n");
             scanf("%d", &medioPago[i]);
-        } while (validacionMetodoPago(medioPago[i] == 0));
+        } while (validacionMetodoPago(medioPago[i])== 0);
 
         montoAbonar[i] = totalAPagarPorCurso(codTaller[i], edad[i], medioPago[i]);
     };
